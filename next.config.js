@@ -11,5 +11,14 @@ module.exports = {
       'm.media-amazon.com',
       '0.media.collegehumor.cvcdn.com'
     ]
+  },
+  rewrites: async () => {
+    return [
+      {
+        source: '/api/graphql',
+        destination: 'https://thelog-keystone.herokuapp.com/api/graphql'
+      }
+    ]
   }
+
 }

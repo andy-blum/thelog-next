@@ -2,8 +2,8 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 
 export default function PasserStats({player}) {
-  const {fullStats} = player
-  console.log(fullStats);
+  const {fullStats} = player;
+
   return (
     <DataTable value={Object.values(fullStats)}>
       <Column field="title" />

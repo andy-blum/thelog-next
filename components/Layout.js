@@ -22,19 +22,14 @@ const ContentWrapper = styled.div`
 export default function Layout({children}) {
 
   const user = useUser();
-  const [logout, {data, loading, error}] = useLogoutFunction();
+  const [logout] = useLogoutFunction();
 
-  useEffect(() => {
-    console.log(user);
-    console.log(logout);
-  })
   return (
     <SiteWrapper>
       <GlobalStyles/>
       <TopBar/>
       <ContentWrapper>
         {user ? children : <LoginForm />}
-        {children}
       </ContentWrapper>
     </SiteWrapper>
   )
