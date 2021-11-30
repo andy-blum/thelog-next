@@ -1,0 +1,7 @@
+const content = `
+## 4. Tanking
+
+1. Tanking is a serious threat to the integrity of HHB. Tanking is the act of submitting a weaker line-up in hopes of improving draft position, or by means of neglecting your team so that you are no longer managing your team. Both negatively affect the league. Under these rules you may never submit an injured person listed as “out” on the injury report or a player on a bye week. These players are assured to score zero points. If you have someone on your team that could start in their place you must use them instead. Starting lesser quality players over higher quality players is allowed. However, if it is believed that the owner is submitting a line-up in order to lose a game they will also receive the same penalty. Owners have a great deal of freedom to submit line-ups they are comfortable with; they can take chances and start players they are comfortable with. This rule is not to make sure that you start your best players but that you keep the league competitive. Owners that break these rules are brought in front of the Commissioner or a League vote who can enforce a penalty of 1 draft position on the next 1st round pick that they own. If this violation happens more than once in the season the owner will be suspended from the league for the rest of the year. The Commissioner will set that team’s line-up until the end of the season.
+`;
+
+export default content;
