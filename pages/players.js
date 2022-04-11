@@ -13,7 +13,9 @@ import DefenderStats from '../components/DefenderStats';
 
 const ALL_PLAYER_QUERY = gql`
   query ALL_PLAYER_QUERY(
-    $where: PlayerWhereInput!
+    $name: String!
+    $contract: ContractWhereInput
+    $positions: [String!]
   ) {
     players(
       orderBy: {
@@ -21,7 +23,16 @@ const ALL_PLAYER_QUERY = gql`
       }
       take: 50
       skip: 0
-      where: $where
+      where: {
+        name: {
+          mode: insensitive,
+          contains: $name
+        }
+        position: {
+          in: $positions
+        }
+        contract: $contract,
+      }
     ) {
       id
       espn_id
@@ -30,6 +41,7 @@ const ALL_PLAYER_QUERY = gql`
       position
       positionRank
       overallRank
+      isRookie
       contract {
         salary
         years
@@ -94,36 +106,38 @@ export default function PlayersPage() {
 
   useEffect(() => {
     if (formValues) {
+
+      const name = formValues?.playerName?.name || "";
+
       const positions = formValues.positions.length ?
         formValues.positions.map(pos => pos.code) :
         formOptions.positions.map(pos => pos.code);
 
+
       const statusFilter = formValues.contractStatus.map(status => status.code);
-      const name = formValues?.playerName?.name || "";
 
       const isSigned = statusFilter.includes('isSigned');
       const isFreeAgent = statusFilter.includes('isFreeAgent');
 
-      let status;
+      let contract = {};
 
-      if (isSigned && isFreeAgent) {status = {};}
-      else if (isFreeAgent) {status = null;}
-      else if (isSigned) {status = {salary: {gt: 0}};}
-      else {status = {};}
+      if (isFreeAgent && !isSigned) {
+        contract = null;
+      }
 
-      const whereFilters = {
-        contract: status,
-        name: {
-          contains: name,
-        },
-        position: {
-          in: positions,
+      if (!isFreeAgent && isSigned) {
+        contract = {
+          salary: {
+            gt: 0
+          }
         }
-      };
+      }
 
       getPlayers({
         variables: {
-          where: whereFilters
+          name,
+          positions,
+          contract
         }
       });
     }
@@ -198,7 +212,7 @@ export default function PlayersPage() {
         <Column header="Pos. Rank" field="positionRank"/>
         <Column header="Ovr. Rank" field="overallRank" />
         <Column header="Contract" body={contractCell}/>
-        <Column expander style={{ width: '2em' }} />
+        {/* <Column expander style={{ width: '2em' }} /> */}
       </DataTable>
     </Card>
     </>

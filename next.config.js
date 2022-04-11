@@ -16,9 +16,8 @@ module.exports = {
     return [
       {
         source: '/api/graphql',
-        destination: 'https://thelog-keystone.herokuapp.com/api/graphql'
+        destination: 'https://api.log.football/api/graphql'
       }
     ]
   }
-
 }

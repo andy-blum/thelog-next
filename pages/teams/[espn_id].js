@@ -18,6 +18,11 @@ const TEAM_PAGE_QUERY = gql`
       }
     }) {
       id
+      team {
+        owner {
+          id
+        }
+      }
       player {
         espn_id
         name

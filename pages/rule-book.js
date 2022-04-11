@@ -1,44 +1,52 @@
 import { PageHeader, PageContent, ScrollableContent } from "../components/Layout";
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import sectionOne from '../content/rulebook/01-league-overview';
-import sectionTwo from '../content/rulebook/02-franchise-ownership';
-import sectionThree from '../content/rulebook/03-initial-draft-contracts-salary-cap';
-import sectionFour from '../content/rulebook/04-tanking';
-import sectionFive from '../content/rulebook/05-rookie-draft';
-import sectionSix from '../content/rulebook/06-rosters';
-import sectionSeven from '../content/rulebook/07-developmental-taxi-squad';
-import sectionEight from '../content/rulebook/08-individual-defensive-players';
-import sectionNine from '../content/rulebook/09-player-contracts';
-import sectionTen from '../content/rulebook/10-trading';
-import sectionEleven from '../content/rulebook/11-free-agency';
+import marked from "marked";
 import { Card } from "primereact/card";
+import { useEffect, useState } from "react";
 
 export default function RulebookPage() {
+  const [chapters, setChapters] = useState([]);
 
-  const sections = [
-    sectionOne,
-    sectionTwo,
-    sectionThree,
-    sectionFour,
-    sectionFive,
-    sectionSix,
-    sectionSeven,
-    sectionEight,
-    sectionNine,
-    sectionTen,
-    sectionEleven,
-  ];
+  useEffect(() => {
+    (async () => {
+      const base = 'https://raw.githubusercontent.com/the-log/rulebook/main';
+      const toc = await fetch(`${base}/table-of-contents.json`).then(resp => resp.json());
 
-  return (
-    <>
-      {sections.map((section, i)=> (
-        <Card key={`rule-section-${i}`}>
+      const fetchedChapters = [];
+
+      for (const chapter of toc) {
+        const title = chapter.substr(3, chapter.length - 6).split('-').join(' ');
+        const text = await fetch(`${base}/${chapter}`).then(resp => resp.text());
+
+        fetchedChapters.push({
+          title,
+          text
+        });
+      }
+
+      setChapters(fetchedChapters);
+    })()
+
+  }, []);
+
+  if (chapters.length) {
+    return (
+      <>
+      {chapters.map((section, i)=> (
+        <Card key={`rule-section-${i + 1}`} id={`rule-section-${i + 1}`}>
           <ReactMarkdown plugins={[remarkGfm]}>
-            {section}
+            {section.text}
           </ReactMarkdown>
         </Card>
       ))}
-    </>
-  )
+      </>
+    )
+  } else {
+    return (
+      <Card>
+        <p>loading...</p>
+      </Card>
+    )
+  }
 }

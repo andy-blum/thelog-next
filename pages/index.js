@@ -23,6 +23,11 @@ export const MY_TEAM = gql`
       team {
         contracts {
           id
+          team {
+            owner {
+              id
+            }
+          }
           player {
             espn_id
             name
@@ -58,6 +63,25 @@ export const MY_TEAM = gql`
       team {
         abbreviation
       }
+    }
+    bids(
+      where: {
+        team: {
+          espn_id: {
+            equals: 5
+          }
+        }
+      }
+    ) {
+      id
+      player {
+        name
+        position
+        team
+      }
+      salary
+      years
+      is_dts
     }
   }
 `;
@@ -95,7 +119,8 @@ export default function Home() {
         totalWaivedContracts,
       },
     },
-    draftPicks
+    draftPicks,
+    bids,
   } = data
 
   return (
@@ -143,7 +168,13 @@ export default function Home() {
         </ul>
       </Card>
       <Card style={{gridColumn: 'span 4'}} title="Pending Bids">
-        todo
+        <ul>
+          {bids.map(bid => (
+            <li key={bid.id}>
+              {bid.player.name}, ${bid.salary / 100}, {bid.years}yr
+            </li>
+          ))}
+        </ul>
       </Card>
       <Card style={{gridColumn: 'span 4'}} title="Pending Trades">
         todo

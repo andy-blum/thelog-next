@@ -34,6 +34,19 @@ export default class MyDocument extends Document {
         <Head />
         <body>
           <Main />
+          <script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3'
+            async
+            defer
+            dangerouslySetInnerHTML={{
+              __html: `
+                new Crate({
+                  server: '849305767730479125',
+                  channel: '849305768532377622'
+                });
+              `,
+            }}
+          >
+          </script>
           <NextScript />
         </body>
       </Html>

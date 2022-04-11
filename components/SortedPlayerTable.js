@@ -9,6 +9,7 @@ import { Menu } from "primereact/menu";
 import formatMoney from "../lib/formatMoney";
 import { sortObjectsByProperties } from "../lib/sort";
 import { Toast } from "primereact/toast";
+import { useUser } from "../lib/useUser";
 
 const UPDATE_CONTRACT = gql`
   mutation UPDATE_CONTRACT(
@@ -33,9 +34,11 @@ const UPDATE_CONTRACT = gql`
 `;
 
 export default function SortedPlayerTable({contracts, includeActions}) {
+  const user = useUser();
   const toast = useRef(null);
   const menu = useRef(null);
   const [menuPlayer, setMenuPlayer] = useState(null);
+  const [applicablePlayerActions, setApplicablePlayerActions] = useState(null);
 
   const [updateContract] = useMutation(UPDATE_CONTRACT, {
     onCompleted: ({updateContract: {id, player, status}}) => {
@@ -57,7 +60,6 @@ export default function SortedPlayerTable({contracts, includeActions}) {
   const doPlayerAction = ({item, originalEvent}) => {
     const {id, player} = menuPlayer;
     const {destination} = item;
-    console.log(originalEvent, player.name);
     confirmPopup({
       target: originalEvent.target,
       message: `Move ${player.name} to ${destination}?\nThis action cannot be undone.`,
@@ -122,21 +124,23 @@ export default function SortedPlayerTable({contracts, includeActions}) {
     )
   }
 
-  const playerOptions = ({player, id}) => {
-    return (
-      <>
-        <Button
-          icon="pi pi-cog"
-          className="p-button-rounded p-button-text p-button-plain"
-          onClick={(event) => {
-            setMenuPlayer({id, player});
-            menu.current.toggle(event);
-          }}
-          aria-controls="popup_menu"
-          aria-haspopup
-        />
-      </>
-    )
+  const playerOptions = ({player, id, team}) => {
+    if (user?.id && team?.owner?.id === user.id) {
+      return (
+        <>
+          <Button
+            icon="pi pi-cog"
+            className="p-button-rounded p-button-text p-button-plain"
+            onClick={(event) => {
+              setMenuPlayer({id, player});
+              menu.current.toggle(event);
+            }}
+            aria-controls="popup_menu"
+            aria-haspopup
+          />
+        </>
+      )
+    }
   };
 
   const RowGroupHeader = (data) => (
@@ -153,13 +157,14 @@ export default function SortedPlayerTable({contracts, includeActions}) {
         rowGroupMode="subheader"
         rowGroupHeaderTemplate={RowGroupHeader}
         removableSort
+        size="small"
       >
         <Column body={playerBody} header="Player"/>
         <Column field="player.team" header="Team"/>
         <Column field="player.position" sortField="player.positionWeight" sortable header="Position"/>
         <Column body={(c) => formatMoney(c.salary)} sortField="salary" sortable header="Salary"/>
         <Column field="years" header="Years" sortable/>
-        <Column body={playerOptions} key="player.id" header="Actions"/>
+        <Column body={playerOptions} key="player.id"/>
       </DataTable>
     </>
   )

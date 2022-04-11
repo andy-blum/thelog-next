@@ -17,6 +17,7 @@ const SUGGESTIONS_QUERY = gql`
       }
       where: {
         name: {
+          mode: insensitive
           contains: $name
         }
       }
@@ -69,12 +70,12 @@ export default function PlayerSearchForm({formState: {formValues, setFormValues}
   return (
     <form onSubmit={(e) => {e.preventDefault()}}>
       <div className="p-fluid p-formgrid p-grid">
-        <div className="p-field p-col">
+        <div className="field">
           <label htmlFor="playerName" className="p-d-block">Player</label>
           <AutoComplete
             name="playerName"
             key="playerName"
-            delay={750}
+            delay={250}
             value={playerName}
             suggestions={suggestions ? [{name: `${playerName}`, code: "" }, ...suggestions] : []}
             completeMethod={(e) => getSuggestions({
@@ -88,7 +89,7 @@ export default function PlayerSearchForm({formState: {formValues, setFormValues}
           />
         </div>
 
-        <div className="p-field p-col">
+        <div className="field">
           <label className="p-d-block">Positions</label>
           <SelectButton
             optionLabel="name"
@@ -99,7 +100,7 @@ export default function PlayerSearchForm({formState: {formValues, setFormValues}
             onChange={(e) => setPositions(e.value)}
           />
         </div>
-        <div className="p-field p-col">
+        <div className="field">
           <label className="p-d-block">Contract Status</label>
           <SelectButton
             optionLabel="name"
